@@ -12,7 +12,6 @@ try {
 
     require('bootstrap');
     require('admin-lte');
-
 } catch (e) {}
 
 /**
