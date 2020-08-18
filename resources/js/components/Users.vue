@@ -1,6 +1,6 @@
 <template>
     <div class="container">
-       <div class="row pt-5" v-if="$gate.isAdmin()">
+       <div class="row pt-5" v-if="$gate.isAdminOrAuthor()">
           <div class="col-md-12">
             <div class="card">
               <div class="card-header">
@@ -25,7 +25,7 @@
                   </thead>
                   <tbody>
 
-                    <tr v-for="user in users" :key="user.id">
+                    <tr v-for="user in users.data" :key="user.id">
                       <td>{{user.id}}</td>
                       <td>{{user.name}}</td>
                       <td>{{user.email}}</td>
@@ -47,9 +47,22 @@
                 </table>
               </div>
               <!-- /.card-body -->
+              <div class="card-footer">
+
+                  <pagination :data="users" @pagination-change-page="getResults">
+                        <span slot="prev-nav">&lt; Previous</span>
+                        <span slot="next-nav">Next &gt;</span>
+                  </pagination>
+              </div>
             </div>
             <!-- /.card -->
           </div>
+        </div>
+
+        <div v-if="!$gate.isAdminOrAuthor()">
+             <error404>
+
+            </error404>
         </div>
 
 
@@ -66,6 +79,7 @@
         </button>
       </div>
       <form @submit.prevent="editMode ? updateUser(): createUser()">
+            <input type="hidden" name="_token" :value="csrf">
       <div class="modal-body">
            <div class="form-group">
                 <input v-model="form.name" type="text" name="name" placeholder="Name" id="name"
@@ -136,10 +150,17 @@
                     type: '',
                     bio: '',
                     photo: ''
-                })
+                }),
+            csrf: document.querySelector('meta[name="csrf-token"]').getAttribute('content')
             }
         },
         methods: {
+           getResults(page = 1) {
+			axios.get('api/user?page=' + page)
+				.then(response => {
+					this.users = response.data;
+				});
+            },
             updateUser(){
                 this.$Progress.start();
                     this.form.put('api/user/'+this.form.id)
@@ -203,8 +224,8 @@
             },
             loadUser(){
 
-                if(this.$gate.isAdmin()){
-                    axios.get('api/user').then(({ data }) => (this.users = data.data));
+                if(this.$gate.isAdminOrAuthor()){
+                    axios.get('api/user').then(({ data }) => (this.users = data));
                 }
 
             },
@@ -233,6 +254,14 @@
             }
         },
         created() {
+            reload.$on('searching', () => {
+                let query = this.$parent.search;
+                axios.get('api/findUsers?q=' + query)
+                .then((data) => {
+                    this.users = data.data
+                })
+                .catch()
+            });
            this.loadUser();
            reload.$on('reloadPages', () => {
                this.loadUser();

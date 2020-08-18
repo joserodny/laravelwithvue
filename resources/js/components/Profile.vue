@@ -62,6 +62,7 @@
 
                   <div class="tab-pane " id="settings">
                     <form class="form-horizontal">
+                         <input type="hidden" name="_token" :value="csrf">
                       <div class="form-group row">
                         <label for="inputName" class="col-sm-2 col-form-label">Name</label>
                         <div class="col-sm-10">
@@ -129,7 +130,8 @@
                     type: '',
                     bio: '',
                     photo: ''
-                })
+                }),
+                 csrf: document.querySelector('meta[name="csrf-token"]').getAttribute('content')
             }
         },
         mounted() {

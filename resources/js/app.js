@@ -19,9 +19,6 @@ import VueProgressBar from 'vue-progressbar';
 import swal from 'sweetalert2';
 //redirectuser
 import Gate from './Gate';
-//redirectUser
-Vue.prototype.$gate = new Gate(window.user);
-
 
 window.swal = swal;
 
@@ -30,6 +27,9 @@ window.Form = Form;
 
 //reload
 window.reload = new Vue();
+//redirectUser
+Vue.prototype.$gate = new Gate(window.user);
+
 
 
 
@@ -58,6 +58,8 @@ Vue.use(VueProgressBar, {
     height: '4px'
 });
 
+
+
 //vue router
 let routes = [{
     path: '/dashboard',
@@ -71,6 +73,9 @@ let routes = [{
 }, {
     path: '/developer',
     component: require('./components/Developer.vue').default
+}, {
+    path: '*',
+    component: require('./components/404.vue').default
 }];
 
 
@@ -113,7 +118,12 @@ Vue.component(
     require('./components/passport/PersonalAccessTokens.vue').default
 );
 
+Vue.component(
+    'error404',
+    require('./components/404.vue').default
+);
 
+Vue.component('pagination', require('laravel-vue-pagination'));
 
 
 
@@ -138,5 +148,13 @@ Vue.component('example-component', require('./components/ExampleComponent.vue').
 
 const app = new Vue({
     el: '#app',
-    router
+    router,
+    data: {
+        search: ''
+    },
+    methods: {
+        searchit: _.debounce(() => {
+            reload.$emit('searching');
+        }, 1000)
+    }
 });

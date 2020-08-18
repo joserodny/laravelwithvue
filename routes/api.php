@@ -25,9 +25,9 @@ Route::group(['middleware' => 'auth:api'], function() {
         'user' => 'API\UserController'
     ]);
     Route::get('profile', 'API\UserController@profile');
+    Route::get('findUsers', 'API\UserController@search');
     Route::put('profile', 'API\UserController@updateProfile');
+
 });
-
-
 
 

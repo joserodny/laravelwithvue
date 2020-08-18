@@ -30,9 +30,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
     <form class="form-inline ml-3">
         <div class="input-group input-group-sm">
-          <input class="form-control form-control-navbar" type="search" placeholder="Search" aria-label="Search">
+          <input class="form-control form-control-navbar" @keyup="searchit" v-model="search" type="search" placeholder="Search" aria-label="Search">
           <div class="input-group-append">
-            <button class="btn btn-navbar" type="submit">
+            <button class="btn btn-navbar" type="submit" @click="searchit">
               <i class="fas fa-search"></i>
             </button>
           </div>
@@ -63,7 +63,12 @@ scratch. This page gets rid of all links and provides the needed markup only.
           <img src="images/profile/{{ Auth::user()->photo, 'profile.png' }} " class="img-circle elevation-2" alt="User Image">
         </div>
         <div class="info">
-        <a href="#" class="d-block"> {{ Auth::user()->name }} </a>
+        <a href="#" class="d-block">
+            {{ Auth::user()->name }}
+         </a>
+         <span class="d-block text-muted">
+            {{ Auth::user()->type }}
+      </span>
         </div>
       </div>
 
